@@ -84,6 +84,12 @@ The `property` builtin can be substituted, and has `.apply`:
     pip install fproperty
 
 
+or define it yourself:
+
+    def fproperty(func):
+        return property(*func())
+
+
 ## License
 
 Licensed under the Apache License, Version 2.0 (the "License")
