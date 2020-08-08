@@ -1,13 +1,16 @@
+import builtins
+
+__all__ = ['fproperty', 'property']
 
 
-__all__ = ['fproperty']
+_property = builtins.property
 
 
 def fproperty(func):
     """Decorator for a function that returns (fget, fset, fdel, doc)"""
     result = func()
     if not isinstance(result, (tuple, list)):
-        raise ValueError('Expected tuple from builder')
+        raise ValueError('Expected tuple, not %s' % type(result))
 
     fget = fset = fdel = doc = None
     x = len(result)
@@ -24,4 +27,12 @@ def fproperty(func):
     else:
         raise ValueError('too many return values: %i' % x)
 
-    return property(fget, fset, fdel, doc)
+    return _property(fget, fset, fdel, doc)
+
+
+fproperty.apply = fproperty
+
+
+class property(_property):
+    def apply(func):
+        return fproperty(func)

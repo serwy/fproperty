@@ -67,6 +67,17 @@ The `fproperty` decorator can be returned a partial list:
             self._value = value
         return (None, fset)
 
+## `@property.apply`
+
+The `property` builtin can be substituted, and has `.apply`:
+
+    from fproperty import property
+
+    class Thing:
+        @property.apply
+        def attr():
+            def g(self): pass
+            return (g, )
 
 ## Install
 

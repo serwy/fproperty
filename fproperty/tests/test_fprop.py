@@ -1,12 +1,13 @@
 import unittest
 
-from fproperty.api import fproperty
+from fproperty.api import fproperty, property
 
 class Thing:
     def __init__(self):
         self._get_only = '_get_only'
         self._set_only = '_set_only'
         self._del_only = '_del_only'
+        self._full = True
 
     @fproperty
     def get_only():
@@ -26,9 +27,16 @@ class Thing:
             del self._del_only
         return (None, None, d)
 
-    @fproperty
+    @fproperty.apply
     def doc_only():
         return (None, None, None, 'doc_only')
+
+    @property.apply
+    def full():
+        def g(self): return self._full
+        def s(self, v): self._full = v
+        def d(self): del self._full
+        return (g, s, d, 'full')
 
 
 class TestMain(unittest.TestCase):
@@ -84,6 +92,15 @@ class TestMain(unittest.TestCase):
         with self.assertRaises(AttributeError):
             del t.doc_only
 
+    def test_full(self):
+        t = Thing()
+        t.full = 123
+        self.assertEqual(t.full, 123)
+
+        del t.full
+
+        with self.assertRaises(AttributeError):
+            x = t.full
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
